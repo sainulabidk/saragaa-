@@ -237,8 +237,9 @@ import '../../../../assets/style/style.css'
 import ViewModal from './viewModal';
 import { IconButton } from '@mui/material';
 import { Visibility, Edit, Delete } from '@mui/icons-material';
-
+ 
 import { getCustomer, deleteCustomer } from 'module/vendor/container/customerContainer/slice';
+import { toast } from 'react-toastify';
 
 export default function Index() {
   const [tableHeading, setTableHeading] = useState('');
@@ -286,7 +287,10 @@ export default function Index() {
   const handleCloseModal = (formtype) => {
     setOpenModal(false);
     setShowDeleteModal(false);
-    if (formtype === 'addform') setPage(1);
+    if (formtype === 'addform') {
+      // Trigger toast notification when a new customer is added
+      // toast.success('New customer added successfully', { autoClose: 3000 });
+    }
   };
 
   const handleDeleteModal = (item) => {
@@ -297,6 +301,7 @@ export default function Index() {
   const deleteReferenceConfirm = () => {
     dispatch(deleteCustomer(selectedId));
     setShowDeleteModal(false);
+   toast.error('Customer deleted successfully', { autoClose: 3000 });
   };
 
   const columns = [
@@ -333,6 +338,7 @@ export default function Index() {
       )
     }
   ];
+ 
 
   return (
     <DataTable

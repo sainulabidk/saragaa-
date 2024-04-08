@@ -1,9 +1,10 @@
 // import { takeEvery, call } from 'redux-saga/effects';
-// import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import config from 'config';
 import auth from 'container/auth';
+ 
 
 import * as actionType from './slice';
 
@@ -134,7 +135,7 @@ function* deleteSupport(action) {
 
     if (res && res.status === 204) {
       //  yield put({ type: actionType.getCountry().type });
-      //  yield call(() => toast.success('Delete successful', { autoClose: 3000 }));
+      toast.error('Customer deleted successfully', { autoClose: 3000 });
       // yield put({
       //   type: actionType.totalCount().type,
       //   payload: { 'where=': {} }
@@ -160,29 +161,6 @@ export default function* SupportActionWatcher() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // // import { takeEvery, call } from 'redux-saga/effects';
 // // import 'react-toastify/dist/ReactToastify.css';
 // import { put, call, takeEvery } from 'redux-saga/effects';
@@ -191,12 +169,11 @@ export default function* SupportActionWatcher() {
 // import auth from 'container/auth';
 
 // import * as actionType from './slice';
-// import { deleteSupport } from 'module/vendor/container/supportContainer/slice';
 
 // function* fetchSupport() {
 //   try {
 //     // const filter = action.payload;
-//     // console.log("===========Supportdataaa=====",actionType.payload);
+//     // console.log("===========Customerdataaa=====",actionType.payload);
 //     //  let page = (filter && filter.page) || 1;
 //     //  console.log("pageeeeeeeeeeeee",page);
 //     //   let searchVal = (filter?.searchVal && filter?.searchVal) || '';
@@ -210,13 +187,33 @@ export default function* SupportActionWatcher() {
 //       failAction: actionType.getSupportFail(),
 //       authourization: 'token'
 //     };
-//     let res = yield call(auth.basicApi, params);
-
-//     console.log('========Supportdata=====', res);
+//     yield call(auth.basicApi, params);
 //   } catch (error) {
 //     console.log(error);
 //   }
 // }
+
+// function* fetchSupportCount(action) {
+//   const filter = action.payload;
+//   console.log('=============filter=======================', filter);
+
+//   try {
+//     let params = {
+//       api: `${config.Ip}/support/count?where=${JSON.stringify(filter)}`,
+//       method: 'GET',
+//       successAction: actionType.totalCountSuccess(),
+//       failAction: actionType.totalCountFail(),
+//       authourization: 'token'
+//     };
+
+//   yield call(auth.basicApi, params);
+   
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+
 
 // function* fetchSupportById(action) {
 //   const filter = action.payload;
@@ -251,10 +248,10 @@ export default function* SupportActionWatcher() {
 //     let res = yield call(auth.basicApi, params);
 
 //     if (res) {
-//       // yield put(actionType.getSupport());
+//       // yield put(actionType.getCustomer());
 //       yield put({ type: actionType.getSupport().type });
-//       // yield put({ type: actionType.getSupport().type });
-//       yield call(() => toast.success('Add Support  successful', { autoClose: 3000 }));
+//       // yield put({ type: actionType.getCustomer().type });
+//       yield call(() => toast.success('Add Customer  successful', { autoClose: 3000 }));
 //     }
 //   } catch (error) {
 //     console.log(error);
@@ -313,8 +310,38 @@ export default function* SupportActionWatcher() {
 
 // export default function* SupportActionWatcher() {
 //   yield takeEvery('support/getSupport', fetchSupport);
+//   yield takeEvery('support/totalCount', fetchSupportCount)
 //   yield takeEvery('support/addSupport', addSupport);
 //   yield takeEvery('support/getSupportById', fetchSupportById);
 //   yield takeEvery('support/updateSupport', updateSupportById);
-//   yield takeEvery('support/deleteSupport', deleteSupport);
+//   yield takeEvery('support/deleteSupport', deleteSupport)
 // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

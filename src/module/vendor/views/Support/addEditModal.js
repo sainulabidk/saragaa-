@@ -6,8 +6,8 @@ import FormLabel from '@mui/material/FormLabel';
 import Box from '@mui/system/Box';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/material/styles';
-import Textfield from 'ui-component/common/TextField';
-import { Button, MenuItem, TextareaAutosize, Input } from '@mui/material';
+ 
+import { Button, MenuItem, TextField } from '@mui/material';
 import commonStyles from 'assets/style/Style';
 import { getSupportType } from 'module/vendor/container/supportTypeContainer/slice';
 
@@ -22,9 +22,17 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
   const dispatch = useDispatch();
   const supportById = useSelector((state) => state.support.support.supportByIdData);
 
-  const [selectedSupportType, setSelectedSupportType] = useState('');
-  const [selectedPriority, setSelectedPriority] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
+  console.log('=======suportdaaaattaaa=======', supportById);
+
+  // const [selectedPriority, setSelectedPriority] = useState('');
+  // const [selectedImage, setSelectedImage] = useState(null);
+
+  // const [values, setValues] = useState({
+  //   sprtType: formtype === 'editform' ? data?.sprtType || '' : '',
+  //   // priority: formtype === 'editform' ? data?.priority || '' : '',
+  //   // desc: formtype === 'editform' ? data?.desc || '' : ''
+  //   // imgUrls: formtype === 'editform' ? data?.imgUrls || '' : ''
+  // });
 
   useEffect(() => {
     if (formtype === 'editform' && data && data.id) {
@@ -37,25 +45,26 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (formtype === 'editform' && supportById) {
-      setSelectedSupportType(supportById.sprtType || '');
-      setSelectedPriority(supportById.priority || '');
-      setSelectedImage(supportById.imgUrls || []);
+    if (formtype === 'editform' && supportById && supportById.sprtType) {
+      setSelectedSupportType(supportById.sprtType.id || ''); // Ensure supportById.sprtType is not undefined
+      // setSelectedPriority(supportById.priority || '');
+      // setSelectedImage(supportById.imgUrls || []);
     }
   }, [formtype, supportById]);
 
   const initialValues = {
     sprtType: formtype === 'editform' ? supportById?.sprtType || '' : '',
-    priority: formtype === 'editform' ? supportById?.priority || '' : '',
-    desc: formtype === 'editform' ? supportById?.desc || '' : '',
-    imgUrls: formtype === 'editform' ? supportById?.imgUrls || '' : ''
+    // priority: formtype === 'editform' ? supportById?.priority || '' : '',
+    // desc: formtype === 'editform' ? supportById?.desc || '' : ''
+    // imgUrls: formtype === 'editform' ? supportById?.imgUrls || '' : ''
   };
+  const [selectedSupportType, setSelectedSupportType] = useState(initialValues.sprtType || '');
 
   const validationSchema = Yup.object({
-    sprtType: Yup.string().required('SupportType is Required'),
-    priority: Yup.string().required('Priority is Required'),
-    desc: Yup.string().required('Description is Required'),
-    imgUrls: Yup.string().required('Image is Required')
+    // sprtType: Yup.string().required('Support is required')
+    // priority: Yup.string().required('Priority is Required'),
+    // desc: Yup.string().required('Description is Required')
+    // imgUrls: Yup.string().required('Image is Required')
   });
 
   const onSubmit = (values, { resetForm }) => {
@@ -69,16 +78,22 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
     resetForm(); // Make sure resetForm is defined and passed as an argument
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
-    } else {
-      setSelectedImage(null);
-    }
-  };
-
+  // const handleImageChange = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const imageUrl = URL.createObjectURL(file);
+  //     setSelectedImage(imageUrl);
+  //   } else {
+  //     setSelectedImage(null);
+  //   }
+  // };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setValues((prevValues) => ({
+  //     ...prevValues,
+  //     [name]: value
+  //   }));
+  // };
   return (
     <Box onClose={handleClose}>
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit} enableReinitialize={true}>
@@ -87,63 +102,66 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <FormLabel>SupportType</FormLabel>
-              <Textfield
-                select
-                name="sprtType"
-                id="sprtType"
-                placeholder="SupportType"
-                value={selectedSupportType}
-                onChange={(e) => setSelectedSupportType(e.target.value)}
-              >
-                {/* {
-                  supportTypeGet.map((item)=>(
-                    <MenuItem> </MenuItem>
-                  ))
-                } */}
-                { supportTypeGet.rows.map((option) => (
-                  <MenuItem key={option.id}  >
-                    {option.supportType}
-                  </MenuItem>
-                ))}
-              </Textfield>
+              <TextField
+  select
+  name="sprtType"
+  id="sprtType"
+  placeholder="Select Support Type"
+  value={selectedSupportType || ''}
+  onChange={(e) => setSelectedSupportType(e.target.value)}
+  fullWidth
+>
+  {supportTypeGet &&
+    supportTypeGet.rows &&
+    supportTypeGet.rows.map((option) => (
+      <MenuItem key={option.id} value={option.id}> {/* Extracting id property */}
+        {option.supportType}
+      </MenuItem>
+    ))}
+</TextField>
+
 
               <ErrorMessage name="sprtType" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <FormLabel>Priority</FormLabel>
               <Textfield
                 select
                 name="priority"
                 id="priority"
-                placeholder="Priority"
+                placeholder="Select Priority Type"
                 value={selectedPriority}
                 onChange={(e) => setSelectedPriority(e.target.value)}
               >
-                {['low', 'medium', 'high', 'urgent'].map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
+                <MenuItem value="low">Low</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="high">High</MenuItem>
+                <MenuItem value="urgent">Urgent</MenuItem>
+                
               </Textfield>
               <ErrorMessage name="priority" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <FormLabel>Description</FormLabel>
-              <TextareaAutosize
+              <TextField
                 name="desc"
                 id="desc"
-                value={initialValues.desc} // Use initialValues instead of values
+                value={values.desc} // Use values instead of initialValues to make the field editable
+                onChange={handleChange} // Ensure you have handleChange function defined from Formik
                 placeholder="Description"
-                style={{ width: '100%', minHeight: 100, resize: 'vertical' }}
+                multiline
+                rows={4} // Adjust the number of rows as needed
+                fullWidth
+                variant="outlined"
               />
               <ErrorMessage name="desc" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <FormLabel>Image</FormLabel>
-              <Input type="file" name="imgUrl" id="imgUrl" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
-              <label htmlFor="imgUrl">
+              <Input type="file" name="imgUrls" id="imgUrls" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+              <label htmlFor="imgUrls">
                 <Button variant="outlined" component="span">
                   Choose Image
                 </Button>
@@ -153,8 +171,8 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
                   <img src={selectedImage} alt="Selected" style={{ maxWidth: '100px', maxHeight: '100px', marginRight: '10px' }} />
                 </div>
               )}
-              <ErrorMessage name="imgUrl" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
-            </Grid>
+              <ErrorMessage name="imgUrls" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
+            </Grid> */}
           </Grid>
           <Button type="submit" sx={style.changeBtn}>
             Save
@@ -176,36 +194,64 @@ export default AddEditModal;
 // import Grid from '@mui/material/Grid';
 // import { useTheme } from '@mui/material/styles';
 // import Textfield from 'ui-component/common/TextField';
-// import { Button, MenuItem } from '@mui/material';
+// import { Button, MenuItem, TextField, Input } from '@mui/material';
 // import commonStyles from 'assets/style/Style';
+// import { getSupportType } from 'module/vendor/container/supportTypeContainer/slice';
+
 // import { addSupport, updateSupport, getSupportById } from 'module/vendor/container/supportContainer/slice';
 
 // const AddEditModal = ({ formtype, data, handleClose }) => {
+//   const supportTypeGet = useSelector((state) => state.supportType.supportType.supportTypeData);
+
+//   console.log('+======data====', supportTypeGet);
 //   const theme = useTheme();
 //   const style = commonStyles(theme);
 //   const dispatch = useDispatch();
 //   const supportById = useSelector((state) => state.support.support.supportByIdData);
-//   console.log('====support===', supportById);
+
+//   console.log('=======suportdaaaattaaa=======', supportById);
+
 //   const [selectedPriority, setSelectedPriority] = useState('');
+//   const [selectedImage, setSelectedImage] = useState(null);
+
+//   const [values, setValues] = useState({
+//     sprtType: formtype === 'editform' ? data?.sprtType || '' : '',
+//     priority: formtype === 'editform' ? data?.priority || '' : '',
+//     desc: formtype === 'editform' ? data?.desc || '' : '',
+//     imgUrls: formtype === 'editform' ? data?.imgUrls || '' : ''
+//   });
 
 //   useEffect(() => {
-//     if (data && data.id) {
+//     if (formtype === 'editform' && data && data.id) {
 //       dispatch(getSupportById(data.id));
 //     }
-//   }, [dispatch, data]);
+//   }, [dispatch, formtype, data]);
+
+//   useEffect(() => {
+//     dispatch(getSupportType());
+//   }, [dispatch]);
+
+//   useEffect(() => {
+//     if (formtype === 'editform' && supportById && supportById.sprtType) {
+//       setSelectedSupportType(supportById.sprtType.id || ''); // Ensure supportById.sprtType is not undefined
+//       setSelectedPriority(supportById.priority || '');
+//       setSelectedImage(supportById.imgUrls || []);
+//     }
+//   }, [formtype, supportById]);
 
 //   const initialValues = {
 //     sprtType: formtype === 'editform' ? supportById?.sprtType || '' : '',
 //     priority: formtype === 'editform' ? supportById?.priority || '' : '',
-//     imgUrls: formtype === 'editform' ? supportById?.imgUrls || '' : '',
-//     desc: formtype === 'editform' ? supportById?.desc || '' : ''
+//     desc: formtype === 'editform' ? supportById?.desc || '' : '',
+//     imgUrls: formtype === 'editform' ? supportById?.imgUrls || '' : ''
 //   };
+//   const [selectedSupportType, setSelectedSupportType] = useState(initialValues.sprtType || '');
 
 //   const validationSchema = Yup.object({
 //     sprtType: Yup.string().required('SupportType is Required'),
 //     priority: Yup.string().required('Priority is Required'),
-//     imgUrls: Yup.string().required('Image URLs is Required'),
-//     desc: Yup.string().required('Description is Required')
+//     desc: Yup.string().required('Description is Required'),
+//     imgUrls: Yup.string().required('Image is Required')
 //   });
 
 //   const onSubmit = (values, { resetForm }) => {
@@ -216,21 +262,64 @@ export default AddEditModal;
 //       dispatch(updateSupport(values));
 //     }
 //     handleClose(formtype);
-//     resetForm();
+//     resetForm(); // Make sure resetForm is defined and passed as an argument
 //   };
 
+//   const handleImageChange = (event) => {
+//     const file = event.target.files[0];
+//     if (file) {
+//       const imageUrl = URL.createObjectURL(file);
+//       setSelectedImage(imageUrl);
+//     } else {
+//       setSelectedImage(null);
+//     }
+//   };
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setValues((prevValues) => ({
+//       ...prevValues,
+//       [name]: value
+//     }));
+//   };
 //   return (
 //     <Box onClose={handleClose}>
 //       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit} enableReinitialize={true}>
 //         <Form>
+//           <Grid container spacing={2}></Grid>
 //           <Grid container spacing={2}>
+//             <Grid item xs={12} sm={6}>
+//               <FormLabel>SupportType</FormLabel>
+//               <Textfield
+//                 select
+//                 name="sprtType"
+//                 id="sprtType"
+//                 placeholder="Select Support Type"
+//                 value={selectedSupportType}
+//                 onChange={(e) => setSelectedSupportType(e.target.value)}
+//               >
+//                 {/* {
+//                   supportTypeGet.map((item)=>(
+//                     <MenuItem> </MenuItem>
+//                   ))
+//                 } */}
+//                 {supportTypeGet &&
+//                   supportTypeGet.rows &&
+//                   supportTypeGet.rows.map((option) => (
+//                     <MenuItem key={option.id} value={option.id}>
+//                       {option.supportType}
+//                     </MenuItem>
+//                   ))}
+//               </Textfield>
+
+//               <ErrorMessage name="sprtType" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
+//             </Grid>
 //             <Grid item xs={12} sm={6}>
 //               <FormLabel>Priority</FormLabel>
 //               <Textfield
 //                 select
 //                 name="priority"
 //                 id="priority"
-//                 placeholder="Priority"
+//                 placeholder="Select Priority Type"
 //                 value={selectedPriority}
 //                 onChange={(e) => setSelectedPriority(e.target.value)}
 //               >
@@ -242,26 +331,37 @@ export default AddEditModal;
 //               </Textfield>
 //               <ErrorMessage name="priority" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
 //             </Grid>
-//             <Grid item xs={12} sm={6}>
-//               <FormLabel>SupportType</FormLabel>
-//               <Textfield select name="sprtType" id="sprtType" placeholder="SupportType">
-//                 {['Technical', 'option1', 'option2', 'option3'].map((option) => (
-//                   <MenuItem key={option} value={option}>
-//                     {option}
-//                   </MenuItem>
-//                 ))}
-//               </Textfield>
-//               <ErrorMessage name="sprtType" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
-//             </Grid>
-//             <Grid item xs={12} sm={6}>
-//               <FormLabel>Image URLs</FormLabel>
-//               <input type="file" name="imgUrls" id="imgUrls" onChange={(e) => console.log(e.target.files)} />
-//               <ErrorMessage name="imgUrls" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
-//             </Grid>
+
 //             <Grid item xs={12} sm={6}>
 //               <FormLabel>Description</FormLabel>
-//               <Textfield name="desc" id="desc" placeholder="Description" />
+//               <TextField
+//                 name="desc"
+//                 id="desc"
+//                 value={values.desc} // Use values instead of initialValues to make the field editable
+//                 onChange={handleChange} // Ensure you have handleChange function defined from Formik
+//                 placeholder="Description"
+//                 multiline
+//                 rows={4} // Adjust the number of rows as needed
+//                 fullWidth
+//                 variant="outlined"
+//               />
 //               <ErrorMessage name="desc" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
+//             </Grid>
+
+//             <Grid item xs={12} sm={6}>
+//               <FormLabel>Image</FormLabel>
+//               <Input type="file" name="imgUrls" id="imgUrls" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+//               <label htmlFor="imgUrls">
+//                 <Button variant="outlined" component="span">
+//                   Choose Image
+//                 </Button>
+//               </label>
+//               {selectedImage && (
+//                 <div>
+//                   <img src={selectedImage} alt="Selected" style={{ maxWidth: '100px', maxHeight: '100px', marginRight: '10px' }} />
+//                 </div>
+//               )}
+//               <ErrorMessage name="imgUrls" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
 //             </Grid>
 //           </Grid>
 //           <Button type="submit" sx={style.changeBtn}>

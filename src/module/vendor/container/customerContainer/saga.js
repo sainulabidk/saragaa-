@@ -1,7 +1,8 @@
 // import { takeEvery, call } from 'redux-saga/effects';
 // import 'react-toastify/dist/ReactToastify.css';
 import {put,  call, takeEvery } from 'redux-saga/effects';
-import { toast } from 'react-toastify'; 
+ 
+import {  toast } from 'react-toastify';
 import config from 'config';
 import auth from 'container/auth';
 
@@ -58,11 +59,7 @@ function* fetchCustomer( ) {
 
   
 function* addCustomer(action) {
- 
-
     console.log('=========action.payload===========', action.payload);
-
-
   try {
     let params = {
       api: `${config.Ip}/customerProf`,
@@ -80,7 +77,8 @@ function* addCustomer(action) {
       // yield put(actionType.getCustomer());
       yield put({ type: actionType.getCustomer().type })
       // yield put({ type: actionType.getCustomer().type });
-     yield call(() => toast.success('Add Customer  successful', { autoClose: 3000 }));
+      toast.success('Add Customer  successful', { autoClose: 3000 });
+ 
 
     }
   } catch (error) {
@@ -133,8 +131,8 @@ function* deleteCustomer(action) {
 
     if (res && res.status === 204) {
       //  yield put({ type: actionType.getCountry().type });
-    //  yield call(() => toast.success('Delete successful', { autoClose: 3000 }));
-
+  
+      toast.error('Customer deleted successfully', { autoClose: 3000 });
       // yield put({
       //   type: actionType.totalCount().type,
       //   payload: { 'where=': {} }

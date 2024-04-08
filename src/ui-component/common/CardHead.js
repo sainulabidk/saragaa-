@@ -140,7 +140,7 @@ const CardHead = ({
                   </Grid>
                 )} */}
                 <Box sx={styling.modalResult}>
-                  <FilterAltSharpIcon /> TOTAL SUPPORTS: {supportDetails?.rows?.length || 0}
+                  <FilterAltSharpIcon /> RESULTS: {supportDetails?.rows?.length || 0}
                 </Box>
 
                 <Button
