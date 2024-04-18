@@ -65,7 +65,7 @@ function* addCustomer(action) {
     let res = yield call(auth.basicApi, params);
     console.log('=========res customer===========', res);
     if(res){
-      yield put({type:actionType.getCustomer().type});
+      yield put(actionType.getCustomer());
       yield call(() => toast.success('Add successful', { autoClose: 3000 }));
 
       yield put ({
@@ -74,6 +74,9 @@ function* addCustomer(action) {
       })
     }
   } catch (error) {
+    const errorMessage = error.message || 'An error occurred';
+    // Dispatch a serializable action with error information
+    yield put(actionType.addCustomerFail(errorMessage));
     console.log(error);
   }
 }

@@ -497,17 +497,19 @@ export default function Index() {
 
   const columns = [
     {
-      name: 'NAME',
-      selector: row => row.fName,
-    },
-    {
-      name: 'EMAIL',
-      selector: row => row.email,
+      name: 'FULL NAME',
+      selector: row => `${row.fName.charAt(0).toUpperCase() + row.fName.slice(1)} 
+                        ${row.lName.charAt(0).toUpperCase() + row.lName.slice(1)}`,
     },
     {
       name: 'MOBILE',
       selector: row => row.contactMobile1,
     },
+    {
+      name: 'EMAIL',
+      selector: row => row.email.toLowerCase(),
+    },
+    
     // {
     //   name: 'USER ROLE',
     //   selector: row => row.role,

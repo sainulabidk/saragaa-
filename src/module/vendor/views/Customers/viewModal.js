@@ -173,12 +173,15 @@
 // export default ViewModal;
 
 
-import React ,{useEffect} from 'react';
+import React ,{useEffect,useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/system/Box';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+
+import { Tab, Tabs } from '@mui/material';
+
 import commonStyles from 'assets/style/Style';
 import { getCustomerById  } from 'module/vendor/container/customerContainer/slice';
 
@@ -195,12 +198,20 @@ const ViewModal = ({data}) => {
       }
     }, [dispatch, data]);
 console.log('================data====================',data.id);
+const [currentTab, setCurrentTab] = useState(0);
 
   return (
     <>
       <Box>
+      <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)}>
+            <Tab label="Basic Details" />
+            <Tab label="Additional Details" />
+            <Tab label="General Details" />
+        </Tabs>
+
+        <TabPanel value={currentTab} index={0}>  
         <Grid container spacing={3}>
-        <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
+          <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
             <Typography sx={style.viewModalLab}>Customer Type</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.custType || '-'}</Typography>
           </Grid>
@@ -217,18 +228,23 @@ console.log('================data====================',data.id);
             <Typography sx={style.viewModalContent}>{customerByIdData?.email || '-'}</Typography>
           </Grid>
           <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
-            <Typography sx={style.viewModalLab}>Mobile</Typography>
+            <Typography sx={style.viewModalLab}>Mobile(Primary)</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.contactMobile1 || '-'}</Typography>
           </Grid>
           <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
-            <Typography sx={style.viewModalLab}>Whatsapp</Typography>
+            <Typography sx={style.viewModalLab}>Mobile(Secondary)</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.contactMobile2 || '-'}</Typography>
           </Grid>
-
-          <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
-            <Typography sx={style.viewModalLab}>Country</Typography>
-            <Typography sx={style.viewModalContent}>{customerByIdData?.address?.country?.name || '-'}</Typography>
           </Grid>
+          </TabPanel>
+          
+          <TabPanel value={currentTab} index={1}>
+          <Grid container spacing={2}>
+
+            <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
+              <Typography sx={style.viewModalLab}>Country</Typography>
+              <Typography sx={style.viewModalContent}>{customerByIdData?.address?.country?.name || '-'}</Typography>
+            </Grid>
 
           {/* <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
             <Typography sx={style.viewModalLab}>State</Typography>
@@ -238,10 +254,15 @@ console.log('================data====================',data.id);
             <Typography sx={style.viewModalLab}>District</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.address?.district || '-'}</Typography>
           </Grid> */}
-          <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
+          </Grid>
+          </TabPanel>
+
+          <TabPanel value={currentTab} index={2}>
+          <Grid container spacing={2}>
+          {/* <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
             <Typography sx={style.viewModalLab}>Region</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.address?.region || '-'}</Typography>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
             <Typography sx={style.viewModalLab}>City</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.address?.city || '-'}</Typography>
@@ -256,13 +277,33 @@ console.log('================data====================',data.id);
             <Typography sx={style.viewModalLab}>Address LineII</Typography>
             <Typography sx={style.viewModalContent}>{customerByIdData?.address?.addr2 || '-'}</Typography>
           </Grid>
+          <Grid item xs={12} lg={4} xl={4} md={6} sm={12}>
+            <Typography sx={style.viewModalLab}>Postal Code</Typography>
+            <Typography sx={style.viewModalContent}>{customerByIdData?.address?.postalCode || '-'}</Typography>
+          </Grid>
         
         </Grid>
+        </TabPanel>
+
       </Box>
     </>
   );
 };
 
 export default ViewModal;
+
+function TabPanel(props) {
+  const { children, value, index } = props;
+
+  return (
+    <div hidden={value !== index}>
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
 
 

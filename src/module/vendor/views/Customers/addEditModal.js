@@ -1,4 +1,3 @@
-//////arshad///
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, ErrorMessage } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,16 +51,17 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
     dispatch(getEnqMode())
   }, [dispatch]);
 
-  // const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('INDIA');
+  const [selectedState, setSelectedState] = useState('Kerala');
 
   // useEffect(() => {
   // }, [dispatch, selectedCountry]);
 
-  // useEffect(() => {
-  //   if (formtype === 'editform') {
-  //     setSelectedCountry(customerByIdData?.address?.country || '');
-  //   }
-  // }, [formtype, customerByIdData]);
+  useEffect(() => {
+    if (formtype === 'editform') {
+      setSelectedCountry(customerByIdData?.address?.country || '');
+    }
+  }, [formtype, customerByIdData]);
 
 
   useEffect(() => {
@@ -73,6 +73,14 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
 
   console.log('==================datacheck==================', data);
 
+  const handleChangeCountry = (event) => {
+    setSelectedCountry(event.target.value)
+    console.log('CCCCCCCCCCCCCCCC================',event.target.value);
+  };
+  const handleChangeState = (event) => {
+    setSelectedState(event.target.value)
+    console.log('CCCCCCCCCCCCCCCC================',event.target.value);
+  };
 
 
   const initialValues = {
@@ -84,59 +92,39 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
     contactMobile2: formtype === 'editform' ? customerByIdData?.contactMobile2 || '' : '',
     address: {
       // country: formtype === 'editform' ? customerByIdData?.address?.country || '' : '',    
-      region: formtype === 'editform' ? customerByIdData?.address?.region || '' : '',
+      // region: formtype === 'editform' ? customerByIdData?.address?.region || '' : '',
       city: formtype === 'editform' ? customerByIdData?.address?.city || '' : '',
       addr1: formtype === 'editform' ? customerByIdData?.address?.addr1 || '' : '',
       addr2: formtype === 'editform' ? customerByIdData?.address?.addr2 || '' : '',
+      postalCode: formtype === 'editform' ? customerByIdData?.address?.postalCode || '' : '',
 
     },
     remarks: formtype === 'editform' ? customerByIdData?.remarks || '' : '',
   };
 
   const validationSchema = Yup.object({
-    custType: Yup.string().required('Customer Type is Required'),
+    custType: Yup.string(),
     fName: Yup.string().required('First Name is Required'),
     lName: Yup.string().required('Last Name is Required'),
-    email: Yup.string().required('Email is Required'),
+    email: Yup.string(),
     contactMobile1: Yup.string().required('Mobile is Required'),
-    contactMobile2: Yup.string().required('WhatsApp is Required'),
+    contactMobile2: Yup.string(),
     address: Yup.object().shape({
-      // country: Yup.string(),
-      region: Yup.string().required('Region is Required'),
-      city: Yup.string().required('City is Required'),
+      country: Yup.string(),
+      // region: Yup.string(),
+      city: Yup.string(),
       addr1: Yup.string(),
       addr2: Yup.string(),
+      postalCode: Yup.string(),
     }),
-    remarks: Yup.string().required('Remarks is Required'),
+    remarks: Yup.string(),
   });
 
-
-
-  // const onSubmit = async (values, { resetForm }) => {
-
-  //   try {
-  //     console.log('Submitting form with values:', values);
-  //     if (formtype && formtype === 'addform') {
-  //       await dispatch(addCustomer(values));
-  //       await dispatch(getCustomer());
-  //       await dispatch(getCountry());
-  //     } else {
-  //       values.id = data.id;
-  //       await dispatch(updateCustomer(values));
-  //       await dispatch(getCustomer());
-  //       // await dispatch(getCountry());
-  //     }
-  //     handleClose(formtype);
-  //     resetForm();
-  //   } catch (error) {
-  //     console.error('Error submitting form:', error);
-  //     // Handle error if necessary
-  //   }
-  // };
   const onSubmit = async (values, { resetForm }) => {
     try {
       console.log('Submitting form with values:', values);
       if (formtype && formtype === 'addform') {
+        // values.address.country = selectedCountry;
         await dispatch(addCustomer(values));
         await dispatch(getCustomer());
       } else {
@@ -145,7 +133,7 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
         await dispatch(getCustomer());
       }
       // Get the country data after form submission
-      // await dispatch(getCountry());
+      await dispatch(getCountry());
       handleClose(formtype);
       resetForm();
     } catch (error) {
@@ -153,37 +141,10 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
       // Handle error if necessary
     }
   };
-  // const formik = useFormik({
-  //   initialValues,
-  //   validationSchema,
-  //   onSubmit: async (values, { resetForm }) => {
-  //     try {
-  //       console.log('Submitting form with values:', values);
-  //       if (formtype && formtype === 'addform') {
-  //         await dispatch(addCustomer(values));
-  //         await dispatch(getCustomer());
-  //         // await dispatch(getCountry());
-  //       } else {
-  //         values.id = data.id;
-  //         await dispatch(updateCustomer(values));
-  //         await dispatch(getCustomer());
-  //         // await dispatch(getCountry());
-  //       }
-  //       handleClose(formtype);
-  //       resetForm();
-  //     } catch (error) {
-  //       console.error('Error submitting form:', error);
-  //       // Handle error if necessary
-  //     }
-  //   },
-  // });
 
   const [currentTab, setCurrentTab] = useState(0);
 
-  // const handleChangeCountry = (event) => {
-  //   setSelectedCountry(event.target.value)
-  //   console.log('CCCCCCCCCCCCCCCC================',event.target.value);
-  // };
+  
 
   return (
     <Box onClose={handleClose}>
@@ -220,12 +181,12 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
                 <ErrorMessage name="email" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <FormLabel>Mobile</FormLabel>
+                <FormLabel>Mobile(Primary)</FormLabel>
                 <Textfield name="contactMobile1" id="contactMobile1" placeholder="Mobile" component={Textfield} />
                 <ErrorMessage name="contactMobile1" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <FormLabel>WhatsApp</FormLabel>
+                <FormLabel>Mobile(Scondary)</FormLabel>
                 <Textfield name="contactMobile2" id="contactMobile2" placeholder="WhatsApp" component={Textfield} />
                 <ErrorMessage name="contactMobile2" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
               </Grid>
@@ -262,11 +223,11 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
                   name="address.country"
                   id="address.country"
                   placeholder="Select Country"
-                  // value={selectedCountry}
-                  // onChange={handleChangeCountry}
+                  value={selectedCountry}
+                  onChange={handleChangeCountry}
                   fullWidth
                 >
-                  <MenuItem value="">Select Country</MenuItem>
+                  {/* <MenuItem value="">Select Country</MenuItem> */}
                   {CountryDetails.rows &&
                     Array.isArray(CountryDetails.rows) &&
                     CountryDetails.rows.map((item) => (
@@ -286,8 +247,8 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
                   name="address.state"
                   id="address.state"
                   placeholder="Select State"
-                  // value={selectedCountry}
-                  // onChange={handleChangeCountry}
+                  value={selectedState}
+                  onChange={handleChangeState}
                   fullWidth
                 >
                   <MenuItem value="">Select State</MenuItem>
@@ -309,8 +270,8 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
                   name="address.state"
                   id="address.state"
                   placeholder="Select District"
-                  // value={selectedCountry}
-                  // onChange={handleChangeCountry}
+                  value={selectedState}
+                  onChange={handleChangeState}
                   fullWidth
                 >
                   <MenuItem value="">Select District</MenuItem>
@@ -326,11 +287,11 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
               </Grid>
 
 
-              <Grid item xs={12} sm={4}>
+              {/* <Grid item xs={12} sm={4}>
                 <FormLabel>Region</FormLabel>
                 <Textfield name="address.region" id="address.region" placeholder="Region" component={Textfield} />
                 <ErrorMessage name="address.region" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={4}>
                 <FormLabel>City</FormLabel>
                 <Textfield name="address.city" id="address.city" placeholder="City" component={Textfield} />
@@ -346,6 +307,11 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
                 <FormLabel>Address Line2</FormLabel>
                 <Textfield name="address.addr2" id="address.addr2" placeholder="AddressLine2" component={Textfield} />
                 <ErrorMessage name="address.addr2" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormLabel>Postal Code</FormLabel>
+                <Textfield name="address.postalCode" id="address.postalCode" placeholder="Postal Coe" component={Textfield} />
+                <ErrorMessage name="address.postalCode" component="div" style={{ color: '#f54d4f', fontSize: 12 }} />
               </Grid>
             </Grid>
 
