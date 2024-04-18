@@ -77,13 +77,7 @@ const bankSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    // deleteBankSuccess: (state, action) => {
-    //   state.loading = false;
-    //   state.bankData =
-    //     action.payload === undefined
-    //       ? current(state.bankData)
-    //       : current(state.bankData).filter((option) => option.id !== action.payload);
-    // },
+ 
 
     deleteBankSuccess: (state, action) => {
       state.loading = false;

@@ -179,8 +179,7 @@
 // export default AddEditModal;
 
 
-
-// --------------------------------------------------------------------------------
+ 
 
 
 import React, { useEffect} from 'react';
@@ -224,7 +223,7 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
   });
 
   const onSubmit = (values, { resetForm }) => {
-    console.log(values, '=======updatedValues========');
+ 
     const isChanged = Object.keys(initialValues).some(key => initialValues[key] !== values[key]);
     if (isChanged) {
     if (formtype && formtype === 'addform') {

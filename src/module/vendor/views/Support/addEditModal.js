@@ -28,7 +28,7 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
   }, [dispatch, formtype, data]);
 
   useEffect(() => {
-    if (formtype === 'editform' && supportById && supportById.sprtType) {
+    if (formtype === 'editform' && supportById && supportById.imgUrls) {
       setSelectedImage(supportById.imgUrls || '');
     }
   }, [formtype, supportById]);
@@ -44,23 +44,43 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
     sprtType: Yup.string().required('Support is required'),
     priority: Yup.string().required('Priority is Required'),
     desc: Yup.string().required('Description is Required'),
-    // imgUrls: formtype === 'editform' ? Yup.string().notRequired() : Yup.string().required('Image is Required')
+    imgUrls: formtype === 'editform' ? Yup.string().notRequired() : Yup.string().required('Image is Required')
   });
 
   const onSubmit = async (values, { resetForm }) => {
-    if (formtype && formtype === 'addform') {
-      await dispatch(addSupport(values));
-    } else {
-      values.id = data.id;
-      await dispatch(updateSupport(values));
+    try {
+      if (formtype && formtype === 'addform') {
+        await dispatch(addSupport(values));
+      } else {
+        values.id = data.id;
+        await dispatch(updateSupport(values));
+      }
+      handleClose(formtype);
+      resetForm();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // Handle error display or other actions
     }
-    handleClose(formtype);
-    resetForm(); 
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+    const allowedFormats = ['image/png', 'image/jpeg'];
+  
     if (file) {
+      // Check if the file format is allowed
+      if (!allowedFormats.includes(file.type)) {
+        console.error('Unsupported file format. Please upload PNG or JPEG images only.');
+        return;
+      }
+  
+      // Check if the file size is within the limit (500kb)
+      if (file.size > 500 * 1024) {
+        console.error('File size exceeds the limit of 500kb. Please upload a smaller image.');
+        return;
+      }
+  
+      // If both format and size are valid, create the image URL
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
     } else {
@@ -157,3 +177,166 @@ const AddEditModal = ({ formtype, data, handleClose }) => {
 };
 
 export default AddEditModal;
+
+
+// import DataTable from 'react-data-table-component';
+// import React, { useState } from 'react';
+// import OpenModal from 'ui-component/common/OpenModal';
+// import AddEditModal from './addEditModal';
+// import '../../../../assets/style/style.css';
+// // import TableRows from 'ui-component/Table/TableRows';
+// import { IconButton } from '@mui/material';
+// import { Visibility, Delete } from '@mui/icons-material';
+// import EditNoteIcon from '@mui/icons-material/EditNote';
+// import CardHead from 'ui-component/common/CardHead';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { useEffect } from 'react';
+// import DeleteModal from 'ui-component/Modals/DeleteModal';
+// import ViewModal from './viewModal';
+// import '../../../../assets/style/style.css';
+
+// import { getSupport, deleteSupport } from 'module/vendor/container/supportContainer/slice';
+
+// export default function Index() {
+//   const [openModal, setOpenModal] = useState(false);
+//   const [modalComponent, setModalComponent] = useState(null);
+//   const [modalHeading, setModalHeading] = useState('');
+//   const [tableHeading, setTableHeading] = useState('');
+//   const [showDeleteModal, setShowDeleteModal] = useState(false);
+//   const [selectedId, setSelectedId] = useState();
+//   const [filteredData, setFilteredData] = useState([]);
+
+//   const modalStyle = { width: '60%' };
+//   const dispatch = useDispatch();
+//   const supportDetails = useSelector((state) => state.data.support.supportData);
+
+//   console.log('=========suppprt details', supportDetails);
+//   useEffect(() => {
+//     dispatch(getSupport({}));
+//     setTableHeading('SUPPORT TYPE');
+//   }, [dispatch]);
+
+//   const handleOpenModal = (whichOpen, item) => {
+//     setOpenModal(true);
+//     let ComponentToRender;
+//     switch (whichOpen) {
+//       case 'addform':
+//         setModalHeading('Add Support');
+//         ComponentToRender = <AddEditModal formtype="addform" data={item} handleClose={handleCloseModal} />;
+//         break;
+//       case 'editform':
+//         setModalHeading('Edit Support');
+//         ComponentToRender = <AddEditModal formtype="editform" data={item} handleClose={handleCloseModal} />;
+//         break;
+//       case 'viewform':
+//         setModalHeading('View Support');
+//         ComponentToRender = <ViewModal data={item} />;
+//         break;
+//       default:
+//         ComponentToRender = null;
+//     }
+//     setModalComponent(ComponentToRender);
+//   };
+
+//   const handleCloseModal = (formtype) => {
+//     setOpenModal(false);
+//     setShowDeleteModal(false);
+//     if (formtype === 'addform') setPage(1);
+//     dispatch(getSupport());
+//   };
+
+//   const handleDeleteModal = (item) => {
+//     setShowDeleteModal(true);
+//     setSelectedId(item.id);
+//   };
+
+//   const deleteReferenceConfirm = () => {
+//     dispatch(deleteSupport(selectedId));
+//     setShowDeleteModal(false);
+//     dispatch(getSupport());
+//   };
+
+//   const handleSearch = (event) => {
+//     const searchValue = event.target.value.toLowerCase();
+//     const filteredData = supportDetails.rows.filter((row) => {
+//       return (row.support.toLowerCase().includes(searchValue) || row.desc.toLowerCase().includes(searchValue))
+//     });
+//     setFilteredData(filteredData); // Update the filtered data state
+//   };
+//   const dataToDisplay = filteredData.length > 0 ? filteredData : supportDetails.rows;
+
+//   const columns = [
+//     {
+//       name: 'SUPPORT TYPE',
+//       selector: (row) => row.sprtType?.supportType || 'N/A'
+//     },
+//     {
+//               name: 'PRIORITY',
+//               selector: (row) => row.priority
+//             },
+//     {
+//       name: 'DESCRIPTION',
+//       selector: (row) => {
+//         if(row.desc.length > 20) {
+//           return row.desc.substring(0,20) + '....'
+//         }
+//         return row.desc
+//       }
+//     },
+  
+
+//     {
+//       name: 'ACTIONS',
+//       cell: (row) => (
+//         <div>
+//           <IconButton onClick={() => handleOpenModal('viewform', row)}>
+//             <Visibility className="actn-icon1" style={{ color: 'blue' }} /> {/* Example: blue color */}
+//           </IconButton>
+//           <IconButton onClick={() => handleOpenModal('editform', row)}>
+//             <EditNoteIcon className="actn-icon2" style={{ color: 'green' }} /> {/* Example: green color */}
+//           </IconButton>
+//           <IconButton onClick={() => handleDeleteModal(row)}>
+//             <Delete className="actn-icon3" style={{ color: 'red' }} /> {/* Example: red color */}
+//           </IconButton>
+//         </div>
+//       )
+//     }
+//   ];
+
+//   return (
+//     <DataTable
+//       columns={columns}
+//       data={dataToDisplay}
+//       // striped
+//       highlightOnHover
+//       pointerOnHover
+//       subHeader
+//       pagination
+//       paginationPerPage={6}
+//       paginationRowsPerPageOptions={[10, 20, 30]}
+//       subHeaderComponent={
+//         <div>
+//           <CardHead
+//             tableHeading={tableHeading}
+//             handleAddModal={() => handleOpenModal('addform')}
+//             supportDetails={supportDetails}
+//             searchHandler={handleSearch}
+//           />
+//           {openModal && (
+//             <OpenModal
+//               open={openModal}
+//               handleClose={handleCloseModal}
+//               component={modalComponent}
+//               mdlwidth={modalStyle.width}
+//               mdlHeading={modalHeading}
+//             />
+//           )}
+
+//           {showDeleteModal && (
+//             <DeleteModal open={showDeleteModal} handleClose={handleCloseModal} id={selectedId} onDeleteConfirm={deleteReferenceConfirm} />
+//           )}
+//         </div>
+//       }
+//     />
+//   );
+// }

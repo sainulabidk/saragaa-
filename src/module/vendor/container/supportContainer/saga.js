@@ -4,7 +4,7 @@ import { put, call, takeEvery } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import config from 'config';
 import auth from 'container/auth';
-
+ 
 import * as actionType from './slice';
 
 function* fetchSupport() {
@@ -30,25 +30,25 @@ function* fetchSupport() {
   }
 }
 
-function* fetchSupportCount(action) {
-  const filter = action.payload;
-  console.log('=============filter=======================', filter);
+// function* fetchSupportCount(action) {
+//   const filter = action.payload;
+//   console.log('=============filter=======================', filter);
 
-  try {
-    let params = {
-      api: `${config.Ip}/support/count?where=${JSON.stringify(filter)}`,
-      method: 'GET',
-      successAction: actionType.totalCountSuccess(),
-      failAction: actionType.totalCountFail(),
-      authourization: 'token'
-    };
+//   try {
+//     let params = {
+//       api: `${config.Ip}/support/count?where=${JSON.stringify(filter)}`,
+//       method: 'GET',
+//       successAction: actionType.totalCountSuccess(),
+//       failAction: actionType.totalCountFail(),
+//       authourization: 'token'
+//     };
 
-  yield call(auth.basicApi, params);
+//   yield call(auth.basicApi, params);
    
-  } catch (error) {
-    console.log(error);
-  }
-}
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 
 
@@ -88,7 +88,7 @@ function* addSupport(action) {
       // yield put(actionType.getCustomer());
       yield put({ type: actionType.getSupport().type });
       // yield put({ type: actionType.getCustomer().type });
-      yield call(() => toast.success('Add Customer  successful', { autoClose: 3000 }));
+      yield call(() => toast.success('Add Support  successful', { autoClose: 3000 }));
     }
   } catch (error) {
     console.log(error);
@@ -110,8 +110,10 @@ function* updateSupportById(action) {
     };
 
     let res = yield call(auth.basicApi, params);
+    yield call(() => toast.success('Edit Support successful', { autoClose: 2000 }));
 
     console.log('=================updateresponse===================', res);
+    yield put(getSupport());
   } catch (error) {
     console.log(error);
   }
@@ -131,6 +133,7 @@ function* deleteSupport(action) {
     };
 
     let res = yield call(auth.basicApi, params);
+    yield call(() => toast.error(' Delete Successfully', { autoClose: 3000 }));
 
     if (res && res.status === 204) {
       //  yield put({ type: actionType.getCountry().type });
@@ -147,7 +150,7 @@ function* deleteSupport(action) {
 
 export default function* SupportActionWatcher() {
   yield takeEvery('support/getSupport', fetchSupport);
-  yield takeEvery('support/totalCount', fetchSupportCount)
+  // yield takeEvery('support/totalCount', fetchSupportCount)
   yield takeEvery('support/addSupport', addSupport);
   yield takeEvery('support/getSupportById', fetchSupportById);
   yield takeEvery('support/updateSupport', updateSupportById);

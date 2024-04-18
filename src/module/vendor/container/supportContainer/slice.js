@@ -6,7 +6,7 @@ const supportSlice = createSlice({
     supportData: [],
     loading: false,
     error: null,
-    supportCount:0,
+    // supportCount:0,
     supportByIdData: {}
   },
   reducers: {
@@ -47,21 +47,21 @@ const supportSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    totalCount: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    totalCountSuccess: (state, action) => {
+    // totalCount: (state) => {
+    //   state.loading = true;
+    //   state.error = null;
+    // },
+    // totalCountSuccess: (state, action) => {
     
-      console.log('===============action.payload=====================',action.payload);
+    //   console.log('===============action.payload=====================',action.payload);
 
-      state.loading = false;
-      state.supportCount = action.payload.count;
-    },
-    totalCountFail: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
+    //   state.loading = false;
+    //   state.supportCount = action.payload.count;
+    // },
+    // totalCountFail: (state, action) => {
+    //   state.loading = false;
+    //   state.error = action.payload;
+    // },
 
     updateSupport: (state) => {
       state.loading = true;
@@ -70,7 +70,7 @@ const supportSlice = createSlice({
 
     updateSupportSuccess: (state, action) => {
       console.log('================action.payload====================', action.payload);
-      alert('hey i am here');
+  
       state.loading = false;
       state.supportData =
         action.payload === undefined
@@ -103,18 +103,22 @@ export const {
   getSupport,
   getSupportSuccess,
   getSupportFail,
+
   addSupport,
   addSupportSuccess,
   addSupportFail,
+
   getSupportById,
   getSupportByIdSuccess,
   getSupportByIdFail,
-  totalCount,
-  totalCountSuccess,
-  totalCountFail,
+
+  // totalCount,
+  // totalCountSuccess,
+  // totalCountFail,
   updateSupport,
   updateSupportSuccess,
   updateSupportFail,
+  
   deleteSupport,
   deleteSupportSuccess,
   deleteSupportFail
